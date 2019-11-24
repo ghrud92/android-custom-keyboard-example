@@ -6,7 +6,7 @@
 
     <color name="keyboardBackground">#34495E</color>
     <color name="keyboardDivider">#2C3E50</color>
-    <color name="keyboardPressed">#95A5A6</color>
-    <color name="keyboardText">#000000</color>
-    <color name="keyboardPreview">#5D5D5D</color>
+    <color name="keyboardPressed">#009688</color>
+    <color name="keyboardText">#FFFFFF</color>
+    <color name="keyboardPreview">#009688</color>
 </resources>

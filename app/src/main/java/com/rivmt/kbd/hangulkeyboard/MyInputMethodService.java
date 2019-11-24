@@ -8,6 +8,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
 
 import com.rivmt.kbd.hangulkeyboard.R;
@@ -16,18 +17,15 @@ public class MyInputMethodService extends InputMethodService implements Keyboard
     private KeyboardView keyboardView;
     private Keyboard keyboard;
 
-    private boolean isCaps = false;   // Caps Lock
     private short mTypeInput = 0; //0:단모음, 1:쿼티, 2:
     private int[] mLetters = {0,0,0};
     private short mLetterCursor = 0;
-    private boolean mIntervalInput = false;
     private KeyTimer mKeyTimer = new KeyTimer(500, 100);
 
     @Override
     public View onCreateInputView() {
         //Timer Class
         mKeyTimer.start();
-
 
         //Keyboard View
         keyboardView = (KeyboardView) getLayoutInflater().inflate(R.layout.keyboard_view, null);
@@ -39,37 +37,74 @@ public class MyInputMethodService extends InputMethodService implements Keyboard
 
     @Override
     public void onPress(int primaryCode) {
+        //Play Sound
+        playClick(primaryCode);
 
+        //Preview
+        if (!(primaryCode >= 12593 && primaryCode <= 12643)) {
+            keyboardView.setPreviewEnabled(true);
+        }
     }
 
     @Override
     public void onRelease(int primaryCode) {
-
+        //Preview
+        if (!(primaryCode >= 12593 && primaryCode <= 12643)) {
+            keyboardView.setPreviewEnabled(false);
+        }
     }
 
     @Override
     public void onKey(int i, int[] ints) {
         InputConnection inputConnection = getCurrentInputConnection();
-        if (inputConnection == null)
+        EditorInfo info = getCurrentInputEditorInfo();
+        if (inputConnection == null) {
             return;
+        }
 
-        playClick(i);
+        //Code Control
         switch (i) {
             case Keyboard.KEYCODE_DELETE :
                 deleteOneLetter();
                 resetLetter();
                 break;
             case Keyboard.KEYCODE_SHIFT:
-                isCaps = !isCaps;
-                keyboard.setShifted(isCaps);
-                keyboardView.invalidateAllKeys();
+                if (mLetterCursor > 0) {
+                    completePreview();
+                }
                 break;
             case Keyboard.KEYCODE_DONE:
-                inputConnection.sendKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_ENTER));
+                inputDone(inputConnection, info);
+                break;
+            case 32://Space Bar
+                inputChar(i);
+                resetLetter();
                 break;
             default:
                 confirmChar(i);
                 Log.i("Hangul",(char) mLetters[0]+", "+(char) mLetters[1]+", "+(char) mLetters[2]);
+        }
+    }
+
+    private void inputDone(InputConnection ic, EditorInfo ei) {
+        int type=ei.imeOptions & EditorInfo.IME_MASK_ACTION;
+        switch(type) {
+            case EditorInfo.IME_ACTION_UNSPECIFIED:
+            case EditorInfo.IME_ACTION_NONE:
+            case EditorInfo.IME_ACTION_DONE:
+            case EditorInfo.IME_ACTION_GO:
+                ic.sendKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_ENTER));
+                break;
+            case EditorInfo.IME_ACTION_SEARCH:
+                ic.sendKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_SEARCH));
+                break;
+            default:
+                if ((ei.inputType & EditorInfo.TYPE_TEXT_FLAG_MULTI_LINE) != 0) {
+                    ic.sendKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_ENTER));
+                } else {
+                    ic.performEditorAction(type);
+                }
+                break;
         }
     }
 
