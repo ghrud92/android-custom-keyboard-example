@@ -1,1 +1,3 @@
-# android-custom-keyboard-example
+# hangul-keyboard
+
+This is hangul(korean) keyboard.
