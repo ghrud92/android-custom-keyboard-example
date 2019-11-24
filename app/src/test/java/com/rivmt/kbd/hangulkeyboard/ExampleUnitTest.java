@@ -1,4 +1,4 @@
-package com.example.ho.customkeyboardexample;
+package com.rivmt.kbd.hangulkeyboard;
 
 import org.junit.Test;
 

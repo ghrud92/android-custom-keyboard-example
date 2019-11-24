@@ -4,7 +4,7 @@
     android:gravity="center"
     android:background="@color/keyboardPreview"
     android:textColor="@android:color/white"
-    android:textStyle="italic"
+    android:textStyle="normal"
     android:textAlignment="center"
     android:textSize="30sp">
     <!-- 키보드를 눌렀을때 일시적으로 나타나는 뷰. 생성 높이에 제한이 있는 듯 하다. 무조건 키 위에 생성하는법? -->

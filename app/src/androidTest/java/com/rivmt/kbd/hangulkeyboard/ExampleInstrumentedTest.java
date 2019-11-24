@@ -1,4 +1,4 @@
-package com.example.ho.customkeyboardexample;
+package com.rivmt.kbd.hangulkeyboard;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
