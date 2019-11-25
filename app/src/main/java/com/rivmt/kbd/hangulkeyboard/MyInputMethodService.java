@@ -30,6 +30,7 @@ public class MyInputMethodService extends InputMethodService implements Keyboard
     public View onCreateInputView() {
         //Timer Class
         mKeyTimer.start();
+
         //Keyboard View
         keyboardView = (KeyboardView) getLayoutInflater().inflate(R.layout.keyboard_view, null);
         keyboard = new Keyboard(this, R.xml.keys_layout);
