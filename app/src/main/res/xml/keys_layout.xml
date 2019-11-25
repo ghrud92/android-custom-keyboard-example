@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Keyboard xmlns:android="http://schemas.android.com/apk/res/android"
     android:keyWidth="12.5%p"
-    android:horizontalGap="0px"
-    android:verticalGap="0px"
+    android:horizontalGap="4dp"
+    android:verticalGap="4dp"
     android:keyHeight="48dp"
     android:keyTextColor="@color/colorAccent"
     android:keyBackground="@color/colorPrimaryDark"
@@ -50,10 +50,11 @@
         <Key android:codes="-5" android:keyIcon="@drawable/ic_backspace_black_24dp" android:isRepeatable="true" android:keyEdgeFlags="right"/>
     </Row>
     <Row android:rowEdgeFlags="bottom">
-        <Key android:codes="63" android:keyLabel="abc" android:keyWidth="10%p"  android:keyEdgeFlags="left"/>
-        <Key android:codes="44" android:keyLabel="," android:keyWidth="10%p" />
-        <Key android:codes="47" android:keyIcon="@drawable/ic_language_black_24dp" android:keyWidth="10%p" />
+
+        <Key android:codes="44" android:keyLabel="," android:keyWidth="10%p" android:keyEdgeFlags="left"/>
+        <Key android:codes="-3" android:keyIcon="@drawable/ic_language_black_24dp" android:keyWidth="10%p" />
         <Key android:codes="32" android:keyWidth="60%p" android:isRepeatable="true"/>
+        <Key android:codes="46" android:keyLabel="." android:keyWidth="10%p"/>
         <Key android:codes="-4" android:keyBackground="@color/colorPrimary" android:keyIcon="@drawable/ic_done_black_24dp" android:keyWidth="20%p" android:keyEdgeFlags="right"/>
     </Row>
 </Keyboard>

@@ -1,5 +1,6 @@
 package com.rivmt.kbd.hangulkeyboard;
 
+import android.content.Context;
 import android.inputmethodservice.InputMethodService;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
@@ -10,17 +11,20 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
+import android.view.inputmethod.InputMethodManager;
 
 import com.rivmt.kbd.hangulkeyboard.R;
 
 public class MyInputMethodService extends InputMethodService implements KeyboardView.OnKeyboardActionListener {
     private KeyboardView keyboardView;
     private Keyboard keyboard;
+    private InputMethodService mInputMethodService;
 
     private short mTypeInput = 0; //0:단모음, 1:쿼티, 2:
     private int[] mLetters = {0,0,0};
     private short mLetterCursor = 0;
     private KeyTimer mKeyTimer = new KeyTimer(500, 100);
+
 
     @Override
     public View onCreateInputView() {
@@ -41,17 +45,18 @@ public class MyInputMethodService extends InputMethodService implements Keyboard
         playClick(primaryCode);
 
         //Preview
-        if (!(primaryCode >= 12593 && primaryCode <= 12643)) {
-            keyboardView.setPreviewEnabled(true);
-        }
+        keyboardView.setPreviewEnabled(true);
     }
 
     @Override
     public void onRelease(int primaryCode) {
         //Preview
-        if (!(primaryCode >= 12593 && primaryCode <= 12643)) {
-            keyboardView.setPreviewEnabled(false);
-        }
+        keyboardView.setPreviewEnabled(checkPreview(primaryCode));
+        Log.i("Key","Key Released "+primaryCode);
+    }
+
+    public boolean checkPreview(int i) {
+        return (i >= 12593 && i <= 12643 && i > 0);
     }
 
     @Override
@@ -75,6 +80,21 @@ public class MyInputMethodService extends InputMethodService implements Keyboard
                 break;
             case Keyboard.KEYCODE_DONE:
                 inputDone(inputConnection, info);
+                break;
+            case -3://Language
+                InputMethodManager imm =(InputMethodManager) getSystemService((Context.INPUT_METHOD_SERVICE));
+                boolean ttt;
+                //imm.showInputMethodPicker();
+                if (android.os.Build.VERSION.SDK_INT < 28) {
+                    ttt=imm.switchToNextInputMethod(keyboardView.getWindowToken(), true);
+                    Log.i("Sys","Change Keyboard (SDK Lower than 28)");
+                } else {
+                    ttt=switchToNextInputMethod(true);
+                    if (!ttt) {
+                        switchToPreviousInputMethod();
+                    }
+                    Log.i("Sys","Change Keyboard");
+                }
                 break;
             case 32://Space Bar
                 inputChar(i);
@@ -185,11 +205,16 @@ public class MyInputMethodService extends InputMethodService implements Keyboard
                         inputLetter(mLetterCursor,i,false);
                     } else if (preCursor==2) {
                         Log.i("Hangul","Pre-cursor pos is jongseong");
+
+                        mLetters[2]=0;
+                        int aaa=mLetters[2];
                         //TODO: Complete
                         completePreview();
 
-                        Log.i("Hangul","Input single Letter: "+(char) i);
-                        inputChar(i);
+
+                        mLetters[0]=aaa;
+                        Log.i("Hangul","Move jongseong to choseong and insert moeum: "+(char) i);
+                        inputLetter(1,i,false);
                     }
                 } else {
                     Log.i("Hangul","Input is Jaeum");
