@@ -40,8 +40,7 @@
         <Key android:codes="12643" android:keyLabel="ㅣ" android:keyEdgeFlags="right"/>
     </Row>
     <Row>
-        <Key android:codes="-1" android:keyIcon="@drawable/ic_forward_black_24dp" android:keyEdgeFlags="left"/>
-        <Key android:codes="12619" android:keyLabel="ㅋ"/>
+        <Key android:codes="12619" android:keyLabel="ㅋ" android:horizontalGap="5%p" android:keyEdgeFlags="left"/>
         <Key android:codes="12620" android:keyLabel="ㅌ"/>
         <Key android:codes="12618" android:keyLabel="ㅊ"/>
         <Key android:codes="12621" android:keyLabel="ㅍ"/>

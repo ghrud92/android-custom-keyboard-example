@@ -67,7 +67,7 @@ public class IMEDanmoeum extends IMEMaster {
                     mLetters[mLetterCursor]=inputCode;
                     mInfo.deleteOneLetter();
                     mInfo.mCreateLetters.append((char) createHangul());
-                    resetLetter();
+                    //resetLetter();
                 }
 
             }
@@ -151,6 +151,7 @@ public class IMEDanmoeum extends IMEMaster {
                         resetLetter();
                         mLetters[0]=inputCode;
                         mInfo.mCreateLetters.append((char) createHangul());
+                        mLetterCursor=1;
 
                     }
                 }
@@ -426,6 +427,68 @@ public class IMEDanmoeum extends IMEMaster {
                 return 26;
             case 12622:
                 return 27;
+
+        }
+        return 0;
+    }
+    private int getJongseongUniCode(int i) {
+        switch(i) {
+            case 0://Null
+                return 0;
+            case 1:
+                return 12593;
+            case 2:
+                return 12594;
+            case 3:
+                return 12595;
+            case 4:
+                return 12596;
+            case 5:
+                return 12597;
+            case 6:
+                return 12598;
+            case 7:
+                return 12599;
+            case 8:
+                return 12601;
+            case 9:
+                return 12602;
+            case 10:
+                return 12603;
+            case 11:
+                return 12604;
+            case 12:
+                return 12605;
+            case 13:
+                return 12606;
+            case 14:
+                return 12607;
+            case 15:
+                return 12608;
+            case 16:
+                return 12609;
+            case 17:
+                return 12610;
+            case 18:
+                return 12612;
+            case 19:
+                return 12613;
+            case 20:
+                return 12614;
+            case 21:
+                return 12615;
+            case 22:
+                return 12616;
+            case 23:
+                return 12618;
+            case 24:
+                return 12619;
+            case 25:
+                return 12620;
+            case 26:
+                return 12621;
+            case 27:
+                return 12622;
 
         }
         return 0;

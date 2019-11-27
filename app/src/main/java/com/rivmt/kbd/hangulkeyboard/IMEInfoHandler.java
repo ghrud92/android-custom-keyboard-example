@@ -11,7 +11,7 @@ public class IMEInfoHandler {
     }
 
     public boolean deleteOneLetter() {
-        int a =mCreateLetters.length();
+        int a = mCreateLetters.length();
         if (a > 0) {
             mCreateLetters.deleteCharAt(a-1);
             return true;

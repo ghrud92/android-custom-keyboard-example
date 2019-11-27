@@ -35,11 +35,30 @@ public class MyInputMethodService extends InputMethodService implements Keyboard
 
         //Keyboard View
         keyboardView = (KeyboardView) getLayoutInflater().inflate(R.layout.keyboard_view, null);
-        keyboard = new Keyboard(this, R.xml.keys_layout);
-        keyboardView.setKeyboard(keyboard);
+        EditorInfo ei = getCurrentInputEditorInfo();
+        //ei.
+        setKeyboardLayout(R.xml.layout_danmoeum);
         keyboardView.setOnKeyboardActionListener(this);
         return keyboardView;
     }
+
+    private int selectKeyboardLayout() {
+
+
+        return 0;
+    }
+
+    private void setKeyboardLayout(int layout) {
+        keyboard = new Keyboard(this, layout);
+        keyboardView.setKeyboard(keyboard);
+    }
+
+    /*
+    @Override
+    public View onCreateCandidatesView() {
+        return
+    }
+    */
 
     @Override
     public void onPress(int primaryCode) {
@@ -75,36 +94,73 @@ public class MyInputMethodService extends InputMethodService implements Keyboard
                 deleteOneLetter();
                 break;
             case Keyboard.KEYCODE_SHIFT:
-
                 break;
             case Keyboard.KEYCODE_DONE:
+                completeCandidate();
                 inputDone(inputConnection, info);
                 break;
             case -3://Language
+                //Complete Candidate
+                completeCandidate();
+                //Change Language
                 InputMethodManager imm =(InputMethodManager) getSystemService((Context.INPUT_METHOD_SERVICE));
                 boolean ttt;
-                //imm.showInputMethodPicker();
-                if (android.os.Build.VERSION.SDK_INT < 28) {
-                    ttt=imm.switchToNextInputMethod(keyboardView.getWindowToken(), true);
+                imm.showInputMethodPicker();
+                /*if (android.os.Build.VERSION.SDK_INT < 28) {
+                    ttt=imm.switchToNextInputMethod(keyboardView.getWindowToken(), false);
                     Log.i("Sys","Change Keyboard (SDK Lower than 28)");
                 } else {
-                    ttt=switchToNextInputMethod(true);
+                    ttt=switchToNextInputMethod(false);
+                    Log.i("Sys","Change Keyboard (SDK Bigger than 28)");
                     if (!ttt) {
+                        Log.i("Sys","Changed to Previous Keyboard");
                         switchToPreviousInputMethod();
                     }
-                    Log.i("Sys","Change Keyboard");
-                }
+                }*/
                 break;
             default:
                 if (mIME.checkCode(i)) {
                     mIME.createLetter(i,!mKeyTimer.isTimerEnd);
                 } else {
+                    completeCandidate();
                     inputChar(i);
                 }
                 //Log.i("Hangul",(char) mLetters[0]+", "+(char) mLetters[1]+", "+(char) mLetters[2]);
         }
 
+        //Others
         startKeyTimer();
+        refreshCandidate();
+    }
+
+    @Override
+    public boolean onKeyDown(int i, KeyEvent e) {
+        switch(i) {
+            case -3://Lang
+                Log.i("Sys","Lang Key Down");
+                e.startTracking();
+                return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean onKeyLongPress(int i, KeyEvent e) {
+        switch(i) {
+            case -3://Language
+                Log.i("Sys","Language Selector due to long press");
+                InputMethodManager imm =(InputMethodManager) getSystemService((Context.INPUT_METHOD_SERVICE));
+                imm.showInputMethodPicker();
+                return true;
+        }
+        return false;
+    }
+
+    private void completeCandidate() {
+        //Input
+        InputConnection inputConnection = getCurrentInputConnection();
+        inputConnection.commitText(mCandidateString.toString(), 1);
+        mIME.mInfo.mCreateLetters=new StringBuilder();
         refreshCandidate();
     }
 
@@ -115,7 +171,6 @@ public class MyInputMethodService extends InputMethodService implements Keyboard
         inputConnection.setComposingText(mCandidateString,1);
         Log.i("Cand","Candidate: "+mCandidateString);
     }
-
 
     public static StringBuilder replaceAll(StringBuilder sb, String find, String replace){
         return new StringBuilder(Pattern.compile(find).matcher(sb).replaceAll(replace));
@@ -161,6 +216,7 @@ public class MyInputMethodService extends InputMethodService implements Keyboard
 
     //Timer Tick
     private void startKeyTimer() {
+        mKeyTimer.cancel();
         mKeyTimer = new KeyTimer(500, 100);
         mKeyTimer.start();
         Log.i("KEY", "Timer Began");
